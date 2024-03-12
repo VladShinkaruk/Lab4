@@ -1,45 +1,48 @@
 package Lab1;
+import java.util.Optional;
 import java.util.Scanner;
 
 public class LibraryActions {
 
-    public static void addBook(Scanner scanner, Library... libraries) {
+    // Добавляем метод для получения библиотеки по имени с использованием Optional
+    private static Optional<Library> getLibraryByName(LibraryRepository repository, String name) {
+        return Optional.ofNullable(repository.findLibraryByName(name));
+    }
+
+    public static void addBook(Scanner scanner, LibraryRepository repository) {
         System.out.print("Введите название книги: ");
         String title = scanner.nextLine();
         System.out.print("Введите автора книги: ");
         String author = scanner.nextLine();
         System.out.print("Введите год написания книги: ");
         int year = scanner.nextInt();
-        scanner.nextLine();
+        scanner.nextLine(); // Очищаем буфер
         System.out.print("Введите название библиотеки: ");
         String libraryName = scanner.nextLine();
 
-        for (Library library : libraries) {
-            if (library.getName().equals(libraryName)) {
-                library.addBook(new Book(title, author, year));
-            }
-        }
+        // Используем Optional для обработки отсутствующей библиотеки
+        getLibraryByName(repository, libraryName).ifPresentOrElse(
+            library -> library.addBook(new Book(title, author, year)),
+            () -> System.out.println("Библиотека с названием \"" + libraryName + "\" не найдена.")
+        );
     }
 
-    public static void printBooksByAuthor(Scanner scanner, Library... libraries) {
+    public static void printBooksByAuthor(Scanner scanner, LibraryRepository repository) {
         System.out.print("Введите имя автора: ");
         String authorToSearch = scanner.nextLine();
 
-        for (Library library : libraries) {
-            System.out.println("Книги автора " + authorToSearch + " в " + library.getName() + ":");
-            for (Book book : library.getBooksByAuthor(authorToSearch)) {
-                System.out.println(book.getTitle() + " - " + book.getYear());
-            }
-        }
+        repository.getLibraries().forEach(library -> {
+            System.out.println("Книги автора " + authorToSearch + " в библиотеке " + library.getName() + ":");
+            library.getBooksByAuthor(authorToSearch).forEach(book -> 
+                System.out.println(book.getTitle() + " - " + book.getYear()));
+        });
     }
 
-    public static void printAllBooks(Library... libraries) {
-        for (Library library : libraries) {
+    public static void printAllBooks(LibraryRepository repository) {
+        repository.getLibraries().forEach(library -> {
             System.out.println("Библиотека " + library.getName());
-            for (Book book : library.getBooks()) {
-                System.out.println("Название: " + book.getTitle() + ", Автор: " + book.getAuthor() + ", Год: " + book.getYear());
-            }
-            System.out.println();
-        }
+            library.getBooks().forEach(book -> 
+                System.out.println(book.toString())); // Используем toString для вывода информации о книге
+        });
     }
 }

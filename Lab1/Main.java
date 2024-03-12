@@ -4,6 +4,9 @@ import java.util.Scanner;
 public class Main {
     public static void main(String[] args) {
         Scanner scanner = new Scanner(System.in);
+        
+        // Создание репозитория библиотек
+        LibraryRepository repository = new LibraryRepository();
 
         Library library1 = new Library("Novoya");
         Library library2 = new Library("Veselaya");
@@ -15,6 +18,12 @@ public class Main {
         library2.addBook(new Book("Ronaldo", "Real Madrid", 2007));
         library3.addBook(new Book("Victory", "Klopp", 2023));
 
-        Menu.showMenu(scanner, library1, library2, library3);
+        // Добавляем библиотеки в репозиторий
+        repository.addLibrary(library1);
+        repository.addLibrary(library2);
+        repository.addLibrary(library3);
+
+        // Передаем репозиторий в Menu
+        Menu.showMenu(scanner, repository);
     }
 }
