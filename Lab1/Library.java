@@ -1,9 +1,11 @@
 package Lab1;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 class Library {
     private String libraryName;
+    // Используем ArrayList для инициализации, но возвращаем тип List для большей гибкости
     private List<Book> books;
 
     public Library(String libraryName) {
@@ -15,6 +17,7 @@ class Library {
         return libraryName;
     }
 
+    // Возвращаем тип List вместо конкретной реализации
     public List<Book> getBooks() {
         return books;
     }
@@ -23,13 +26,10 @@ class Library {
         books.add(book);
     }
 
+    // Используем Stream для фильтрации книг по автору
     public List<Book> getBooksByAuthor(String author) {
-        List<Book> booksByAuthor = new ArrayList<>();
-        for (Book book : books) {
-            if (book.getAuthor().equals(author)) {
-                booksByAuthor.add(book);
-            }
-        }
-        return booksByAuthor;
+        return books.stream()
+                .filter(book -> book.getAuthor().equals(author))
+                .collect(Collectors.toList());
     }
 }
